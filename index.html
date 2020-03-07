@@ -1,20 +1,177 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Flappy Gull</title>
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://mixedreality.mozilla.org/ammo.js/builds/ammo.wasm.js"></script>
     <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v4.0.1/dist/aframe-physics-system.min.js"></script>
+    <script type="text/javascript">
+      AFRAME.registerComponent("resize", {
+        schema: {
+          axis: {
+            type: "string",
+            default: "x"
+          },
+          value: {
+            type: "number",
+            default: 1
+          }
+        },
+        init: function() {
+          const el = this.el;
+          const data = this.data;
+          el.addEventListener("model-loaded", function() {
+            const box = new THREE.Box3().setFromObject(el.object3D);
+            const size = box.getSize();
+            let scale = 1;
+            if (data.axis === "x") {
+              scale = data.value / size.x;
+            } else if (data.axis === "y") {
+              scale = data.value / size.y;
+            } else if (data.axis === "z") {
+              scale = data.value / size.z;
+            } else {
+              console.error(
+                'Unknown resize axis "' + data.axis + '" provided for:',
+                el
+              );
+            }
+            el.setAttribute("scale", scale + " " + scale + " " + scale);
+          });
+        }
+      });
+
+      AFRAME.registerComponent("ammo-model-body", {
+        schema: {
+          type: "string"
+        },
+        init: function() {
+          const el = this.el;
+          const data = this.data;
+          el.addEventListener("model-loaded", function() {
+            el.setAttribute("ammo-body", data);
+          });
+        }
+      });
+
+      AFRAME.registerComponent("ammo-model-shape", {
+        schema: {
+          type: "string"
+        },
+        init: function() {
+          const el = this.el;
+          const data = this.data;
+          el.addEventListener("model-loaded", function() {
+            el.setAttribute("ammo-shape", data);
+          });
+        }
+      });
+
+      let speed = 0;
+      let touched = false;
+
+      function touch() {
+        touched = true;
+        setTimeout(() => {
+          touched = false;
+        }, 300);
+      }
+
+      AFRAME.registerComponent("start-game", {
+        init: function() {
+          setTimeout(() => {
+            speed = -0.05;
+            const text = document.getElementById("playerText");
+            text.setAttribute("text", { value: null });
+          }, 5000);
+        }
+      });
+
+      window.addEventListener("mousedown", touch);
+      AFRAME.registerComponent("buttons", {
+        init: function() {
+          const sceneEl = this.el.sceneEl;
+          sceneEl.addEventListener("enter-vr", function() {
+            sceneEl.xrSession.addEventListener("selectstart", touch);
+          });
+        }
+      });
+
+      AFRAME.registerComponent("flappy", {
+        tick: function() {
+          if (speed !== 0) {
+            const player = document.querySelector("#player").object3D;
+            const direction = new THREE.Vector3();
+
+            player.getWorldDirection(direction);
+            direction.multiplyScalar(speed);
+
+            this.el.object3D.position.x -= direction.z;
+            if (!touched) {
+              this.el.object3D.position.y -= 0.05;
+            } else {
+              this.el.object3D.position.y += 0.1;
+            }
+            this.el.object3D.position.z += direction.x;
+          }
+        }
+      });
+
+      AFRAME.registerComponent("collision", {
+        init: function() {
+          const el = this.el;
+          el.addEventListener("collidestart", function() {
+            const text = document.getElementById("playerText");
+            speed = 0;
+            text.setAttribute("text", { value: "Score: 0" });
+          });
+        }
+      });
+    </script>
   </head>
   <body>
-    <a-scene physics="driver: ammo; debug: true; debugDrawMode: 1;">
-      <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9" shadow ammo-body="type: dynamic;" ammo-shape="type: hull"></a-box>
-      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E" shadow></a-sphere>
-      <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D" shadow></a-cylinder>
-      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4" shadow ammo-body="type: static;" ammo-shape="type: hull"></a-plane>
+    <a-scene
+      start-game
+      buttons
+      physics="driver: ammo; debug: false;"
+      background="color: #87CEEB"
+    >
+      <a-assets>
+        <a-asset-item id="cityAsset" src="https://cdn.glitch.com/5ca15494-6465-4620-82c1-22310eb46c5f/model.gltf?v=1583614799377"></a-asset-item>
+        <a-asset-item id="gullAsset" src="https://cdn.glitch.com/5ca15494-6465-4620-82c1-22310eb46c5f/scene.gltf?v=1583614799587"></a-asset-item>
+      </a-assets>
+      <a-entity flappy>
+        <a-camera position="0 1.6 0">
+          <a-entity
+            id="player"
+            resize="value: 1;"
+            position="0 -0.8 -1"
+            rotation="0 90 0"
+            ammo-model-body="type: kinematic; emitCollisionEvents: true;"
+            ammo-model-shape="type: hull; offset: 0 -0.01 0.07"
+            collision
+            gltf-model="#gullAsset"
+          >
+          </a-entity>
+          <a-entity
+            id="playerText"
+            text="value: Game starts after 5 seconds;"
+            position="0 0 -1"
+          ></a-entity>
+        </a-camera>
+      </a-entity>
+      <a-entity
+        id="city"
+        resize="value: 200;"
+        position="0 -110 0"
+        ammo-model-body="type: static;"
+        ammo-model-shape="type: mesh;"
+        gltf-model="#cityAsset"
+      >
+      </a-entity>
     </a-scene>
   </body>
 </html>
