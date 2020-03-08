@@ -73,6 +73,7 @@
 
       let speed = 0;
       let touched = false;
+      let dead = false;
 
       function touch() {
         touched = true;
@@ -85,7 +86,7 @@
         const view = document.getElementById("view").object3D;
         const text = document.getElementById("playerText");
         speed = 0;
-        view.position.set(0, 0, 0);
+        view.position.set(0, 20, 0);
         text.setAttribute("text", { value: "Game starts after 5 seconds" });
         setTimeout(() => {
           speed = 0.05;
@@ -124,6 +125,8 @@
               direction.setY(-0.05);
             }
             this.el.object3D.position.add(direction);
+          } else if (dead && touched) {
+            start();
           }
         }
       });
@@ -134,12 +137,9 @@
           el.addEventListener("collidestart", function() {
             const text = document.getElementById("playerText");
             speed = 0;
+            touched = false;
+            dead = true;
             text.setAttribute("text", { value: "Click to restart" });
-            const restart = function() {
-              el.sceneEl.xrSession.removeEventListener("selectstart", restart);
-              start();
-            };
-            el.sceneEl.xrSession.addEventListener("selectstart", restart);
           });
         }
       });
@@ -182,7 +182,7 @@
       <a-entity
         id="city"
         resize="value: 200;"
-        position="0 -110 0"
+        position="0 -90 0"
         ammo-model-body="type: static;"
         ammo-model-shape="type: mesh;"
         gltf-model="#cityAsset"
