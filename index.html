@@ -25,7 +25,8 @@
           const data = this.data;
           el.addEventListener("model-loaded", function() {
             const box = new THREE.Box3().setFromObject(el.object3D);
-            const size = box.getSize();
+            const size = new THREE.Vector3();
+            box.getSize(size);
             let scale = 1;
             if (data.axis === "x") {
               scale = data.value / size.x;
@@ -81,15 +82,15 @@
       }
 
       function start() {
-        const view = document.querySelector("#view").object3D;
+        const view = document.getElementById("view").object3D;
         const text = document.getElementById("playerText");
         speed = 0;
         view.position.set(0, 0, 0);
-        text.setAttribute("text", { value: "Game starts after 5 seconds"});
+        text.setAttribute("text", { value: "Game starts after 5 seconds" });
         setTimeout(() => {
-            speed = -0.05;
-            text.setAttribute("text", { value: null });
-          }, 5000);
+          speed = -0.05;
+          text.setAttribute("text", { value: null });
+        }, 5000);
       }
 
       AFRAME.registerComponent("start-game", {
@@ -165,10 +166,7 @@
             gltf-model="#gullAsset"
           >
           </a-entity>
-          <a-entity
-            id="playerText"
-            position="0 0 -1"
-          ></a-entity>
+          <a-entity id="playerText" position="0 0 -1"></a-entity>
         </a-camera>
       </a-entity>
       <a-entity
