@@ -129,10 +129,18 @@
       });
 
       AFRAME.registerComponent("collision", {
-        init: function() {
+        init: function(event) {
           const el = this.el;
-          constclickListener = 
-          el.addEventListener("collidestart", start);
+          el.addEventListener("collidestart", function() {
+            const text = document.getElementById("playerText");
+            speed = 0;
+            text.setAttribute("text", { value: "Click to restart" });
+            const restart = function() {
+              el.sceneEl.xrSession.removeEventListener("selectstart", restart);
+              start();
+            };
+            el.sceneEl.xrSession.addEventListener("selectstart", restart);
+          });
         }
       });
     </script>
