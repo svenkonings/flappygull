@@ -88,7 +88,7 @@
         view.position.set(0, 0, 0);
         text.setAttribute("text", { value: "Game starts after 5 seconds" });
         setTimeout(() => {
-          speed = -0.05;
+          speed = 0.05;
           text.setAttribute("text", { value: null });
         }, 5000);
       }
@@ -107,22 +107,23 @@
         }
       });
 
+      const axis = new THREE.Vector3(0, 1, 0);
+      const angle = Math.PI / 2;
+
       AFRAME.registerComponent("flappy", {
         tick: function() {
           if (speed !== 0) {
-            const player = document.querySelector("#player").object3D;
+            const player = document.getElementById("player").object3D;
             const direction = new THREE.Vector3();
-
             player.getWorldDirection(direction);
+            direction.applyAxisAngle(axis, angle);
             direction.multiplyScalar(speed);
-
-            this.el.object3D.position.x -= direction.z;
-            if (!touched) {
-              this.el.object3D.position.y -= 0.05;
+            if (touched) {
+              direction.setY(0.1);
             } else {
-              this.el.object3D.position.y += 0.1;
+              direction.setY(-0.05);
             }
-            this.el.object3D.position.z += direction.x;
+            this.el.object3D.position.add(direction);
           }
         }
       });
@@ -130,6 +131,7 @@
       AFRAME.registerComponent("collision", {
         init: function() {
           const el = this.el;
+          constclickListener = 
           el.addEventListener("collidestart", start);
         }
       });
