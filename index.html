@@ -101,7 +101,7 @@
         view.object3D.position.set(random(-60, -35), 17.5, random(-70, 65));
         setText("Game starts after 5 seconds");
         setTimeout(() => {
-          speed = 0.1;
+          speed = -0.2;
           setText(null);
         }, 5000);
       }
@@ -120,21 +120,17 @@
         }
       });
 
-      const directionAxis = new THREE.Vector3(0, 1, 0);
-      const directionAngle = Math.PI / 2;
-
       AFRAME.registerComponent("flappy", {
         tick: function() {
           if (speed !== 0) {
             const direction = new THREE.Vector3();
-            player.object3D.getWorldDirection(direction);
-            direction.applyAxisAngle(directionAxis, directionAngle);
+            camera.object3D.getWorldDirection(direction);
             direction.multiplyScalar(speed);
-            // if (touched) {
-            //   direction.setY(0.1);
-            // } else {
-            //   direction.setY(-0.05);
-            // }
+            if (touched) {
+              direction.setY(0.2);
+            } else {
+              direction.setY(-0.1);
+            }
             this.el.object3D.position.add(direction);
           } else if (dead && touched) {
             start();
