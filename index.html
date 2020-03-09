@@ -83,8 +83,7 @@
       }
 
       function setText(val) {
-        const text = document.getElementById("playerText");
-        text.setAttribute("text", {
+        playerText.setAttribute("text", {
           align: "center",
           color: "black",
           value: val
@@ -92,9 +91,8 @@
       }
 
       function start() {
-        const view = document.getElementById("view").object3D;
         speed = 0;
-        view.position.set(0, 20, 0);
+        view.object3D.position.set(0, 20, 0);
         setText("Game starts after 5 seconds");
         setTimeout(() => {
           speed = 0.05;
@@ -116,16 +114,15 @@
         }
       });
 
-      const axis = new THREE.Vector3(0, 1, 0);
-      const angle = Math.PI / 2;
+      const directionAxis = new THREE.Vector3(0, 1, 0);
+      const directionAngle = Math.PI / 2;
 
       AFRAME.registerComponent("flappy", {
         tick: function() {
           if (speed !== 0) {
-            const player = document.getElementById("player").object3D;
             const direction = new THREE.Vector3();
-            player.getWorldDirection(direction);
-            direction.applyAxisAngle(axis, angle);
+            player.object3D.getWorldDirection(direction);
+            direction.applyAxisAngle(directionAxis, directionAngle);
             direction.multiplyScalar(speed);
             if (touched) {
               direction.setY(0.1);
@@ -154,13 +151,14 @@
   </head>
   <body>
     <a-scene
+      id="scene"
       start-game
       buttons
       physics="driver: ammo; debug: false;"
       background="color: #87CEEB"
       inspector="url: https://cdn.jsdelivr.net/gh/svenkonings/aframe-inspector@dist/dist/aframe-inspector.min.js;"
     >
-      <a-assets>
+      <a-assets id="assets">
         <a-asset-item
           id="cityAsset"
           src="https://cdn.glitch.com/5ca15494-6465-4620-82c1-22310eb46c5f/model.gltf?v=1583614799377"
@@ -183,11 +181,7 @@
             gltf-model="#gullAsset"
           >
           </a-entity>
-          <a-entity
-            id="playerText"
-            position="0 0 -0.01"
-            scale="0.01 0.01 0.01"
-          ></a-entity>
+          <a-entity id="playerText" position="0 0 -1"></a-entity>
         </a-camera>
       </a-entity>
       <a-entity
