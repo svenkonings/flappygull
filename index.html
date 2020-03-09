@@ -90,9 +90,13 @@
         });
       }
 
+      function random(min, max) {
+        return minInt + Math.random() * (maxInt - minInt + 1));
+      }
+      
       function start() {
         speed = 0;
-        view.object3D.position.set(0, 20, 0);
+        view.object3D.position.set(randomInt(-30, 0), 17.5, randomInt(0,75));
         setText("Game starts after 5 seconds");
         setTimeout(() => {
           speed = 0.05;
