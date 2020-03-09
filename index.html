@@ -91,15 +91,17 @@
       }
 
       function random(min, max) {
-        return minInt + Math.random() * (maxInt - minInt + 1));
+        return min + Math.random() * (max - min);
       }
-      
+
       function start() {
         speed = 0;
-        view.object3D.position.set(randomInt(-30, 0), 17.5, randomInt(0,75));
+        touched = false;
+        dead = false;
+        view.object3D.position.set(random(-60, -35), 17.5, random(-70, 65));
         setText("Game starts after 5 seconds");
         setTimeout(() => {
-          speed = 0.05;
+          speed = 0.1;
           setText(null);
         }, 5000);
       }
@@ -128,11 +130,11 @@
             player.object3D.getWorldDirection(direction);
             direction.applyAxisAngle(directionAxis, directionAngle);
             direction.multiplyScalar(speed);
-            if (touched) {
-              direction.setY(0.1);
-            } else {
-              direction.setY(-0.05);
-            }
+            // if (touched) {
+            //   direction.setY(0.1);
+            // } else {
+            //   direction.setY(-0.05);
+            // }
             this.el.object3D.position.add(direction);
           } else if (dead && touched) {
             start();
