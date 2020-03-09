@@ -9,7 +9,7 @@
     <script src="https://mixedreality.mozilla.org/ammo.js/builds/ammo.wasm.js"></script>
     <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v4.0.1/dist/aframe-physics-system.min.js"></script>
     <script type="text/javascript">
-      AFRAME.registerComponent("resize", {
+      AFRAME.registerComponent("rescale", {
         schema: {
           axis: {
             type: "string",
@@ -36,20 +36,11 @@
               scale = data.value / size.z;
             } else {
               console.error(
-                'Unknown resize axis "' + data.axis + '" provided for:',
+                'Unknown rescale axis "' + data.axis + '" provided for:',
                 el
               );
             }
             el.setAttribute("scale", scale + " " + scale + " " + scale);
-          });
-        }
-      });
-
-      AFRAME.registerComponent("resize-text", {
-        init: function() {
-          const el = this.el;
-          window.addEventListener("resize", function() {
-            el.setAttribute("width", window.innerWidth / 100);
           });
         }
       });
@@ -176,7 +167,7 @@
         <a-camera id="camera" position="0 1.6 0">
           <a-entity
             id="player"
-            resize="value: 1;"
+            rescale="value: 1;"
             position="0 -0.8 -1"
             rotation="0 90 0"
             ammo-model-body="type: kinematic; emitCollisionEvents: true;"
@@ -189,12 +180,13 @@
             id="playerText"
             position="0 0 -0.01"
             scale="0.01 0.01 0.01"
+                    align="center"
           ></a-entity>
         </a-camera>
       </a-entity>
       <a-entity
         id="city"
-        resize="value: 200;"
+        rescale="value: 200;"
         position="0 -90 0"
         ammo-model-body="type: static;"
         ammo-model-shape="type: mesh;"
