@@ -103,17 +103,13 @@
         init: start
       });
 
-      const directionAxis = new THREE.Vector3(0, 1, 0);
-      const directionAngle = Math.PI / 2;
-
       AFRAME.registerComponent("flappy", {
         tick: function() {
           if (speed !== 0) {
             const direction = new THREE.Vector3();
             player.object3D.getWorldDirection(direction);
-            direction.applyAxisAngle(directionAxis, directionAngle);
             direction.multiplyScalar(speed);
-            this.el.object3D.position.add(direction);
+            this.el.object3D.position.sub(direction);
           } else if (dead && touched) {
             start();
           }
@@ -138,7 +134,7 @@
       id="scene"
       start-game
       buttons
-      physics="driver: ammo; debug: false;"
+      physics="driver: ammo; debug: true;"
       background="color: #87CEEB"
       inspector="url: https://cdn.jsdelivr.net/gh/svenkonings/aframe-inspector@dist/dist/aframe-inspector.min.js;"
     >
@@ -152,21 +148,20 @@
           src="https://cdn.glitch.com/5ca15494-6465-4620-82c1-22310eb46c5f/scene.gltf?v=1583614799587"
         ></a-asset-item>
       </a-assets>
-      <a-entity id="view" flappy>
-        <a-camera id="camera" position="0 1.6 0">
+      <a-entity id="view" >
+        <a-camera id="camera" position="0 1.6 0"></a-camera>
           <a-entity
             id="player"
             rescale="value: 1;"
             position="0 -0.8 -1"
-            rotation="0 90 0"
             ammo-model-body="type: kinematic; emitCollisionEvents: true;"
-            ammo-model-shape="type: hull; offset: 0 -0.01 0.07;"
+            ammo-model-shape="type: hull; offset: 0 -0.01 0.1;"
             collision
             gltf-model="#gullAsset"
           >
           </a-entity>
           <a-entity id="playerText" position="0 0 -1"></a-entity>
-        </a-camera>
+        
       </a-entity>
       <a-entity
         id="city"
