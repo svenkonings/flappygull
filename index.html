@@ -75,13 +75,6 @@
       let touched = false;
       let dead = false;
 
-      function touch() {
-        touched = true;
-        setTimeout(() => {
-          touched = false;
-        }, 300);
-      }
-
       function setText(val) {
         playerText.setAttribute("text", {
           align: "center",
@@ -110,16 +103,6 @@
         init: start
       });
 
-      window.addEventListener("mousedown", touch);
-      AFRAME.registerComponent("buttons", {
-        init: function() {
-          const sceneEl = this.el.sceneEl;
-          sceneEl.addEventListener("enter-vr", function() {
-            sceneEl.xrSession.addEventListener("selectstart", touch);
-          });
-        }
-      });
-
       const directionAxis = new THREE.Vector3(0, 1, 0);
       const directionAngle = Math.PI / 2;
 
@@ -130,11 +113,6 @@
             player.object3D.getWorldDirection(direction);
             direction.applyAxisAngle(directionAxis, directionAngle);
             direction.multiplyScalar(speed);
-            if (touched) {
-              direction.setY(0.1);
-            } else {
-              direction.setY(-0.05);
-            }
             this.el.object3D.position.add(direction);
           } else if (dead && touched) {
             start();
