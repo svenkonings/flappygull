@@ -125,7 +125,7 @@
           if (speed !== 0) {
             const direction = new THREE.Vector3();
             player.object3D.getWorldDirection(direction);
-            speed += direction.y;
+            speed += 0.002 * direction.y;
             direction.multiplyScalar(speed);
             this.el.object3D.position.sub(direction);
           } else if (dead && touched) {
