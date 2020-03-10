@@ -75,6 +75,13 @@
       let touched = false;
       let dead = false;
 
+      function touch() {
+        touched = true;
+        setTimeout(() => {
+          touched = false;
+        }, 300);
+      }
+
       function setText(val) {
         playerText.setAttribute("text", {
           align: "center",
@@ -103,11 +110,22 @@
         init: start
       });
 
+      window.addEventListener("mousedown", touch);
+      AFRAME.registerComponent("buttons", {
+        init: function() {
+          const sceneEl = this.el.sceneEl;
+          sceneEl.addEventListener("enter-vr", function() {
+            sceneEl.xrSession.addEventListener("selectstart", touch);
+          });
+        }
+      });
+
       AFRAME.registerComponent("flappy", {
         tick: function() {
           if (speed !== 0) {
             const direction = new THREE.Vector3();
             player.object3D.getWorldDirection(direction);
+            speed += direction.y;
             direction.multiplyScalar(speed);
             this.el.object3D.position.sub(direction);
           } else if (dead && touched) {
@@ -134,22 +152,22 @@
       id="scene"
       start-game
       buttons
-      physics="driver: ammo; debug: true;"
+      physics="driver: ammo; debug: false;"
       background="color: #87CEEB"
       inspector="url: https://cdn.jsdelivr.net/gh/svenkonings/aframe-inspector@dist/dist/aframe-inspector.min.js;"
     >
       <a-assets id="assets">
         <a-asset-item
           id="cityAsset"
-          src="https://cdn.glitch.com/5ca15494-6465-4620-82c1-22310eb46c5f/model.gltf?v=1583614799377"
+          src="https://cdn.glitch.com/5ca15494-6465-4620-82c1-22310eb46c5f/city.gltf?v=1583878269152"
         ></a-asset-item>
         <a-asset-item
           id="gullAsset"
           src="https://cdn.glitch.com/5ca15494-6465-4620-82c1-22310eb46c5f/seagull.gltf?v=1583877818413"
         ></a-asset-item>
       </a-assets>
-      <a-entity id="view">
-        <a-camera id="camera" position="0 1.6 0" wasd-controls="fly:true;"></a-camera>
+      <a-entity id="view" flappy>
+        <a-camera id="camera" position="0 1.6 0" wasd-controls-enabled="false">
           <a-entity
             id="player"
             rescale="value: 1;"
@@ -161,12 +179,12 @@
           >
           </a-entity>
           <a-entity id="playerText" position="0 0 -1"></a-entity>
-        
+        </a-camera>
       </a-entity>
       <a-entity
         id="city"
         rescale="value: 200;"
-        position="0 -90 0"
+        position="0 -20 0"
         ammo-model-body="type: static;"
         ammo-model-shape="type: mesh;"
         gltf-model="#cityAsset"
