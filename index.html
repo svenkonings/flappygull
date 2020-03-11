@@ -128,6 +128,7 @@
             speed += 0.002 * direction.y;
             direction.multiplyScalar(speed);
             this.el.object3D.position.sub(direction);
+
           } else if (dead && touched) {
             start();
           }
