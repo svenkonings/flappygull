@@ -130,7 +130,7 @@
             playerDirection.multiplyScalar(speed);
             this.el.object3D.position.sub(playerDirection);
             // Also steer using tilt
-            this.el.object3D.rotation.y += 0.01 * camera.object3D.rotation.z
+            this.el.object3D.rotation.y += 0.01 * camera.object3D.rotation.z;
           } else if (dead && touched) {
             start();
           }
@@ -139,7 +139,6 @@
 
       AFRAME.registerComponent("collision", {
         init: function(event) {
-          const el = ;
           this.el.addEventListener("collidestart", function() {
             speed = 0;
             touched = false;
