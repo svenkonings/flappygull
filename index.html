@@ -74,6 +74,7 @@
       let speed = 0;
       let touched = false;
       let dead = false;
+      let bounds = new THREE.Vector3();
 
       function touch() {
         touched = true;
@@ -152,12 +153,10 @@
 
       AFRAME.registerComponent("bounds", {
         tick: function() {
-          if (player.object3D.position.length() {
-            ;
-            // Also steer using tilt
-            this.el.object3D.rotation.y += 0.01 * camera.object3D.rotation.z;
-          } else if (dead && touched) {
-            start();
+          const position = view.object3D.position;
+          bounds.set(position.x, 0, position.z);
+          if (bounds.length() > 85) {
+            setText("Out of bounds");
           }
         }
       });
@@ -182,7 +181,7 @@
           src="https://cdn.glitch.com/5ca15494-6465-4620-82c1-22310eb46c5f/seagull.gltf?v=1583877818413"
         ></a-asset-item>
       </a-assets>
-      <a-entity id="view" flappy>
+      <a-entity id="view" flappy bounds>
         <a-camera id="camera" position="0 1.6 0" wasd-controls-enabled="false">
           <a-entity
             id="player"
