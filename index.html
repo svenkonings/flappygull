@@ -74,7 +74,9 @@
       let speed = 0;
       let touched = false;
       let dead = false;
+
       let bounds = new THREE.Vector3();
+      let outOfBoundsTimestamp = null;
 
       function touch() {
         touched = true;
@@ -93,6 +95,10 @@
 
       function random(min, max) {
         return min + Math.random() * (max - min);
+      }
+
+      function currentSeconds() {
+        return Math.floor(Date.now() / 1000);
       }
 
       function start() {
@@ -153,10 +159,23 @@
 
       AFRAME.registerComponent("bounds", {
         tick: function() {
-          const position = view.object3D.position;
-          bounds.set(position.x, 0, position.z);
-          if (bounds.length() > 85) {
-            setText("Out of bounds");
+          if (!dead) {
+            const position = view.object3D.position;
+            bounds.set(position.x, 0, position.z);
+            if (bounds.length() > 100) {
+              if (outOfBoundsTimestamp === null) {
+                outOfBoundsTimestamp = currentSeconds();
+              }
+              const seconds = 10 - (currentSeconds() - outOfBoundsTimestamp);
+              if (seconds <= 0) {
+                stop();
+              } else {
+                setText("Out of bounds: " + seconds);
+              }
+            } else if (outOfBoundsTimestamp !== null) {
+              outOfBoundsTimestamp = null;
+              setText(null);
+            }
           }
         }
       });
