@@ -52,10 +52,8 @@
           type: "string"
         },
         init: function() {
-          const el = this.el;
-          const data = this.data;
-          el.addEventListener("model-loaded", function() {
-            el.setAttribute("ammo-body", data);
+          this.el.addEventListener("model-loaded", function() {
+            this.el.setAttribute("ammo-body", this.data);
           });
         }
       });
@@ -65,10 +63,8 @@
           type: "string"
         },
         init: function() {
-          const el = this.el;
-          const data = this.data;
-          el.addEventListener("model-loaded", function() {
-            el.setAttribute("ammo-shape", data);
+          this.el.addEventListener("model-loaded", function() {
+            this.el.setAttribute("ammo-shape", this.data);
           });
         }
       });
@@ -156,7 +152,7 @@
         }
       });
 
-      let bounds = new THREE.Vector3();
+      const bounds = new THREE.Vector3();
       let outOfBoundsTimestamp = null;
       AFRAME.registerComponent("bounds", {
         tick: function() {
