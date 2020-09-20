@@ -1,10 +1,7 @@
 {
-  "//1": "describes your app and its dependencies",
-  "//2": "https://docs.npmjs.com/files/package.json",
-  "//3": "updating this file will download and update your packages",
-  "name": "networked-aframe-glitch",
+  "name": "flappy-gull",
   "version": "0.0.1",
-  "description": "What am I about?",
+  "description": "Flappy gull",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -13,10 +10,10 @@
     "networked-aframe": "^0.7.1"
   },
   "engines": {
-    "node": "8.10.0"
+    "node": "8.x"
   },
   "repository": {
-    "url": "https://glitch.com/#!/project/networked-aframe"
+    "url": "https://glitch.com/edit/#!/flappygul"
   },
   "license": "MIT",
   "keywords": [

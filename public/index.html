@@ -192,7 +192,7 @@
       background="color: #87CEEB"
       inspector="url: https://cdn.jsdelivr.net/gh/svenkonings/aframe-inspector@dist/dist/aframe-inspector.min.js;"
       networked-scene="
-        app: flappygull;
+        debug: true;
         room: flappyisland;
       "
     >
@@ -207,6 +207,7 @@
         ></a-asset-item>
         <template id="player-template">
           <a-entity
+            position="0 -0.8 -1"
             rescale="value: 1;"
             ammo-model-body="type: kinematic; emitCollisionEvents: true;"
             ammo-model-shape="type: hull; offset: 0 0.05 0;"
@@ -214,12 +215,20 @@
           ></a-entity>
         </template>
       </a-assets>
-      <a-entity id="view" flappy bounds>
+      <a-entity
+        id="view"
+        flappy
+        bounds
+        networked="template: #player-template; attachTemplateToLocal: false;"
+      >
         <a-camera id="camera" position="0 1.6 0" wasd-controls-enabled="false">
           <a-entity
             id="player"
             position="0 -0.8 -1"
-            networked="template:#player-template;attachTemplateToLocal:false"
+            rescale="value: 1;"
+            ammo-model-body="type: kinematic; emitCollisionEvents: true;"
+            ammo-model-shape="type: hull; offset: 0 0.05 0;"
+            gltf-model="#gullAsset"
             collision
           >
           </a-entity>

@@ -11,7 +11,7 @@ const port = process.env.PORT || 8080;
 
 // Setup and configure Express http server.
 const app = express();
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 // Start Express http server
 const webServer = http.createServer(app);
@@ -30,7 +30,7 @@ io.on("connection", socket => {
     if (!rooms[room]) {
       rooms[room] = {
         name: room,
-        occupants: {},
+        occupants: {}
       };
     }
 
@@ -55,7 +55,7 @@ io.on("connection", socket => {
   });
 
   socket.on("disconnect", () => {
-    console.log('disconnected: ', socket.id, curRoom);
+    console.log("disconnected: ", socket.id, curRoom);
     if (rooms[curRoom]) {
       console.log("user disconnected", socket.id);
 
