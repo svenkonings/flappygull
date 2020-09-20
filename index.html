@@ -106,6 +106,13 @@
         }, 5000);
       }
 
+      function stop() {
+        speed = 0;
+        touched = false;
+        dead = true;
+        setText("Click to restart");
+      }
+
       AFRAME.registerComponent("start-game", {
         init: start
       });
@@ -139,12 +146,19 @@
 
       AFRAME.registerComponent("collision", {
         init: function(event) {
-          this.el.addEventListener("collidestart", function() {
-            speed = 0;
-            touched = false;
-            dead = true;
-            setText("Click to restart");
-          });
+          this.el.addEventListener("collidestart", stop);
+        }
+      });
+
+      AFRAME.registerComponent("bounds", {
+        tick: function() {
+          if (player.object3D.position.length() {
+            ;
+            // Also steer using tilt
+            this.el.object3D.rotation.y += 0.01 * camera.object3D.rotation.z;
+          } else if (dead && touched) {
+            start();
+          }
         }
       });
     </script>
