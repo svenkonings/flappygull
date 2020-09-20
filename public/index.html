@@ -70,14 +70,12 @@
       });
 
       let speed = 0;
-      let touched = false;
       let dead = false;
 
       function touch() {
-        touched = true;
-        setTimeout(() => {
-          touched = false;
-        }, 300);
+        if (dead) {
+          start();
+        }
       }
 
       function setText(val) {
@@ -98,7 +96,6 @@
 
       function start() {
         speed = 0;
-        touched = false;
         dead = false;
         view.object3D.position.set(random(-60, -35), 17.5, random(-70, 65));
         setText("Game starts after 5 seconds");
@@ -110,7 +107,6 @@
 
       function stop() {
         speed = 0;
-        touched = false;
         dead = true;
         setText("Click to restart");
       }
@@ -140,8 +136,6 @@
             this.el.object3D.position.sub(playerDirection);
             // Also steer using tilt
             this.el.object3D.rotation.y += 0.01 * camera.object3D.rotation.z;
-          } else if (dead && touched) {
-            start();
           }
         }
       });
