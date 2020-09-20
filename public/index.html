@@ -77,9 +77,6 @@
       let touched = false;
       let dead = false;
 
-      let bounds = new THREE.Vector3();
-      let outOfBoundsTimestamp = null;
-
       function touch() {
         touched = true;
         setTimeout(() => {
@@ -107,7 +104,7 @@
         speed = 0;
         touched = false;
         dead = false;
-        camera.object3D.position.set(random(-60, -35), 17.5, random(-70, 65));
+        view.object3D.position.set(random(-60, -35), 17.5, random(-70, 65));
         setText("Game starts after 5 seconds");
         setTimeout(() => {
           speed = 0.1;
@@ -140,14 +137,13 @@
       AFRAME.registerComponent("flappy", {
         tick: function() {
           if (speed !== 0) {
-            const object3D = this.el.object3D;
             player.object3D.getWorldDirection(playerDirection);
             // Speed up when going down, slow down when going up
             speed += 0.002 * playerDirection.y;
             playerDirection.multiplyScalar(speed);
-            object3D.position.sub(playerDirection);
+            this.el.object3D.position.sub(playerDirection);
             // Also steer using tilt
-            object3D.rotation.y += 0.01 * object3D.rotation.z;
+            this.el.object3D.rotation.y += 0.01 * camera.object3D.rotation.z;
           } else if (dead && touched) {
             start();
           }
@@ -160,10 +156,12 @@
         }
       });
 
+      let bounds = new THREE.Vector3();
+      let outOfBoundsTimestamp = null;
       AFRAME.registerComponent("bounds", {
         tick: function() {
           if (!dead) {
-            const position = camera.object3D.position;
+            const position = this.el.object3D.position;
             bounds.set(position.x, 0, position.z);
             if (bounds.length() > 100) {
               if (outOfBoundsTimestamp === null) {
@@ -192,7 +190,10 @@
       physics="driver: ammo; debug: false;"
       background="color: #87CEEB"
       inspector="url: https://cdn.jsdelivr.net/gh/svenkonings/aframe-inspector@dist/dist/aframe-inspector.min.js;"
-      networked-scene="app: flappygull; room: flappyisland;"
+      networked-scene="
+        debug: true;
+        room: flappyisland;
+      "
     >
       <a-assets id="assets">
         <a-asset-item
@@ -207,32 +208,33 @@
           <a-entity
             position="0 -0.8 -1"
             rescale="value: 1;"
-            ammo-model-body="type: kinematic;"
+            ammo-model-body="type: kinematic; emitCollisionEvents: true;"
             ammo-model-shape="type: hull; offset: 0 0.05 0;"
             gltf-model="#gullAsset"
           ></a-entity>
         </template>
       </a-assets>
-      <a-camera
-        id="camera"
-        position="0 1.6 0"
-        wasd-controls-enabled="false"
+      <a-entity
+        id="view"
         flappy
         bounds
-        networked="template: #player-template; attachTemplateToLocal: false;"
+        networked="attachTemplateToLocal: false;"
       >
-        <a-entity
-          id="player"
-          position="0 -0.8 -1"
-          rescale="value: 1;"
-          ammo-model-body="type: kinematic; emitCollisionEvents: true;"
-          ammo-model-shape="type: hull; offset: 0 0.05 0;"
-          gltf-model="#gullAsset"
-          collision
+        <a-camera
+          id="camera"
+          position="0 1.6 0"
+          wasd-controls-enabled="false"
+          networked="attachTemplateToLocal: false;"
         >
-        </a-entity>
-        <a-entity id="playerText" position="0 0 -1"></a-entity>
-      </a-camera>
+          <a-entity
+            id="player"
+            collision
+            networked="template: #player-template;"
+          >
+          </a-entity>
+          <a-entity id="playerText" position="0 0 -1"></a-entity>
+        </a-camera>
+      </a-entity>
       <a-entity
         id="city"
         rescale="value: 200;"
