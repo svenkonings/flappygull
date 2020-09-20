@@ -180,30 +180,6 @@
           }
         }
       });
-
-      NAF.schemas.add({
-        template: "#player-template",
-        components: [
-          "position",
-          "rotation",
-          {
-            selector: ".camera",
-            component: "position"
-          },
-          {
-            selector: ".camera",
-            component: "rotation"
-          },
-          {
-            selector: ".player",
-            component: "position"
-          },
-          {
-            selector: ".player",
-            component: "rotation"
-          }
-        ]
-      });
     </script>
   </head>
   <body>
@@ -285,4 +261,18 @@
       </a-cylinder>
     </a-scene>
   </body>
+
+  <script>
+    NAF.schemas.add({
+      template: "#player-template",
+      components: [
+        "position",
+        "rotation",
+        {
+          selector: ".camera",
+          component: "object3D.rotation"
+        }
+      ]
+    });
+  </script>
 </html>
