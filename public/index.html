@@ -190,10 +190,7 @@
       physics="driver: ammo; debug: false;"
       background="color: #87CEEB"
       inspector="url: https://cdn.jsdelivr.net/gh/svenkonings/aframe-inspector@dist/dist/aframe-inspector.min.js;"
-      networked-scene="
-        debug: true;
-        room: flappyisland;
-      "
+      networked-scene="app: flappygull; room: flappyisland;"
     >
       <a-assets id="assets">
         <a-asset-item
@@ -204,18 +201,19 @@
           id="gullAsset"
           src="https://cdn.glitch.com/5ca15494-6465-4620-82c1-22310eb46c5f/seagull.gltf?v=1583877818413"
         ></a-asset-item>
-        <template id="player-template">
-          <a-entity class="view">
-            <a-entity class="camera" position="0 1.6 0">
-              <a-entity
-                class="player"
-                position="0 -0.8 -1"
-                rescale="value: 1;"
-                ammo-model-body="type: kinematic; emitCollisionEvents: true;"
-                ammo-model-shape="type: hull; offset: 0 0.05 0;"
-                gltf-model="#gullAsset"
-              >
-              </a-entity>
+        <template id="view-template">
+          <a-entity class="view"></a-entity>
+        </template>
+        <template id="camera-template">
+          <a-entity class="camera" position="0 1.6 0">
+            <a-entity
+              class="player"
+              position="0 -0.8 -1"
+              rescale="value: 1;"
+              ammo-model-body="type: kinematic; emitCollisionEvents: true;"
+              ammo-model-shape="type: hull; offset: 0 0.05 0;"
+              gltf-model="#gullAsset"
+            >
             </a-entity>
           </a-entity>
         </template>
@@ -224,9 +222,14 @@
         id="view"
         flappy
         bounds
-        networked="template: #player-template; attachTemplateToLocal: false;"
+        networked="template: #view-template; attachTemplateToLocal: false;"
       >
-        <a-camera id="camera" position="0 1.6 0" wasd-controls-enabled="false">
+        <a-camera
+          id="camera"
+          position="0 1.6 0"
+          wasd-controls-enabled="false"
+          networked="template: #camera-template; attachTemplateToLocal: false;"
+        >
           <a-entity
             id="player"
             position="0 -0.8 -1"
@@ -261,18 +264,4 @@
       </a-cylinder>
     </a-scene>
   </body>
-
-  <script>
-    NAF.schemas.add({
-      template: "#player-template",
-      components: [
-        "position",
-        "rotation",
-        {
-          selector: ".camera",
-          component: "object3D.rotation"
-        }
-      ]
-    });
-  </script>
 </html>
