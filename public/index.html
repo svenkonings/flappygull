@@ -104,7 +104,7 @@
         view.object3D.position.set(random(-60, -35), 17.5, random(-70, 65));
         setText("Game starts after 5 seconds");
         setTimeout(() => {
-          speed = 0.01;
+          speed = 0.0072; // 0.1 / (1000 / 72)
           setText(null);
         }, 5000);
       }
