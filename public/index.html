@@ -137,7 +137,7 @@
           if (speed !== 0) {
             player.object3D.getWorldDirection(this.direction);
             // Speed up when going down, slow down when going up
-            speed += 0.00001 * timeDelta * this.direction.y; // 0.002 / (1000/72) / (1000/72)
+            speed += 0.000010368 * timeDelta * this.direction.y; // 0.002 / (1000/72) / (1000/72)
             this.direction.multiplyScalar(speed * timeDelta);
             this.el.object3D.position.sub(this.direction);
             // Also steer using tilt
