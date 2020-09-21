@@ -94,8 +94,8 @@
         return min + Math.random() * (max - min);
       }
 
-      function currentSeconds() {
-        return Math.floor(Date.now() / 1000);
+      function currentSeconds(time) {
+        return Math.floor(time / 1000);
       }
 
       function start() {
@@ -129,18 +129,17 @@
         }
       });
 
-      const playerDirection = new THREE.Vector3();
       AFRAME.registerComponent("flappy", {
         init: function() {
-          this.directionVec3 = new THREE.Vector3();
+          this.direction = new THREE.Vector3();
         },
         tick: function(time, timeDelta) {
           if (speed !== 0) {
-            player.object3D.getWorldDirection(playerDirection);
+            player.object3D.getWorldDirection(this.direction);
             // Speed up when going down, slow down when going up
-            speed += 0.00002 * timeDelta * playerDirection.y;
-            playerDirection.multiplyScalar(speed * timeDelta);
-            this.el.object3D.position.sub(playerDirection);
+            speed += 0.00002 * timeDelta * this.direction.y;
+            this.direction.multiplyScalar(speed * timeDelta);
+            this.el.object3D.position.sub(this.direction);
             // Also steer using tilt
             this.el.object3D.rotation.y +=
               0.001 * timeDelta * camera.object3D.rotation.z;
@@ -154,25 +153,28 @@
         }
       });
 
-      const bounds = new THREE.Vector3();
-      let outOfBoundsTimestamp = null;
       AFRAME.registerComponent("bounds", {
+        init: function() {
+          this.bounds = new THREE.Vector3();
+          this.outOfBoundsTimestamp = null;
+        },
         tick: function(time, timeDelta) {
           if (!dead) {
             const position = this.el.object3D.position;
-            bounds.set(position.x, 0, position.z);
-            if (bounds.length() > 100) {
-              if (outOfBoundsTimestamp === null) {
-                outOfBoundsTimestamp = currentSeconds();
+            this.bounds.set(position.x, 0, position.z);
+            if (this.bounds.length() > 100) {
+              if (this.outOfBoundsTimestamp === null) {
+                this.outOfBoundsTimestamp = currentSeconds(time);
               }
-              const seconds = 10 - (currentSeconds() - outOfBoundsTimestamp);
+              const seconds =
+                10 - (currentSeconds(time) - this.outOfBoundsTimestamp);
               if (seconds <= 0) {
                 stop();
               } else {
                 setText("Out of bounds: " + seconds);
               }
-            } else if (outOfBoundsTimestamp !== null) {
-              outOfBoundsTimestamp = null;
+            } else if (this.outOfBoundsTimestamp !== null) {
+              this.outOfBoundsTimestamp = null;
               setText(null);
             }
           }
