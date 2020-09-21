@@ -104,7 +104,7 @@
         view.object3D.position.set(random(-60, -35), 17.5, random(-70, 65));
         setText("Game starts after 5 seconds");
         setTimeout(() => {
-          speed = 0.0072; // 0.1 / (1000 / 72)
+          speed = 0.0072; // 0.1 / (1000/72)
           setText(null);
         }, 5000);
       }
@@ -137,12 +137,12 @@
           if (speed !== 0) {
             player.object3D.getWorldDirection(this.direction);
             // Speed up when going down, slow down when going up
-            speed += 0.00002 * timeDelta * this.direction.y;
+            speed += 0.00001 * timeDelta * this.direction.y; // 0.002 / (1000/72) / (1000/72)
             this.direction.multiplyScalar(speed * timeDelta);
             this.el.object3D.position.sub(this.direction);
             // Also steer using tilt
             this.el.object3D.rotation.y +=
-              0.001 * timeDelta * camera.object3D.rotation.z;
+              0.00072 * timeDelta * camera.object3D.rotation.z; // 0.01 / (1000/72)
           }
         }
       });
